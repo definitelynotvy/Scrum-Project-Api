@@ -37,6 +37,7 @@ router.get(`${baseRoute}/questions/:id`, async (req, res) => {
 // create one quiz question
 router.post(`${baseRoute}/questions`, async (req, res) => {
     try {
+<<<<<<< HEAD
         const { description } = req.body
         const { alternatives } = req.body
         const { test } = req.body
@@ -46,63 +47,74 @@ router.post(`${baseRoute}/questions`, async (req, res) => {
             alternatives,
             test
         })
+=======
+        const { description, alternatives } = req.body;
 
-        return res.status(201).json(question)
+        const question = await Question.create({
+            description,
+            alternatives
+        });
+>>>>>>> f4bba3d6762a0fc1e92ff1649ed46ef679f6c96b
+
+        return res.status(201).json({ message: 'Question created successfully', question });
     } catch (error) {
-        return res.status(500).json({"error":error})
+        return res.status(500).json({ error: error.message });
     }
-})
+});
+
 
 // update one quiz question
 router.put(`${baseRoute}/questions/:id`, async (req, res) => {
     try {
-        const _id = req.params.id 
-        const { description, alternatives, subjects } = req.body
+        const _id = req.params.id;
+        const { description, alternatives, subjects } = req.body;
 
-        let question = await Question.findOne({_id})
+        let question = await Question.findOne({ _id });
 
-        if(!question){
+        if (!question) {
             question = await Question.create({
                 description,
                 alternatives,
                 subjects
-            })    
-            return res.status(201).json(question)
-        }else{
+            });
+            return res.status(201).json({ message: 'Question created successfully', question });
+        } else {
             // updates only the given fields
             if (description) {
-                question.description = description
+                question.description = description;
             }
             if (alternatives) {
-                question.alternatives = alternatives
+                question.alternatives = alternatives;
             }
             if (subjects) {
-                question.subjects = subjects.map((subject) => mongoose.Types.ObjectId(subject))
+                question.subjects = subjects.map((subject) => mongoose.Types.ObjectId(subject));
             }
-            await question.save()
-            return res.status(200).json(question)
+            await question.save();
+            return res.status(200).json({ message: 'Question updated successfully', question });
         }
     } catch (error) {
-        return res.status(500).json({"error":error})
+        return res.status(500).json({ error: error.message });
     }
-})
+});
+
 
 // delete one quiz question
 router.delete(`${baseRoute}/questions/:id`, async (req, res) => {
     try {
-        const _id = req.params.id 
+        const questionId = req.params.id;
 
-        const question = await Question.deleteOne({_id})
+        const deletedQuestion = await Question.findByIdAndDelete(questionId);
 
-        if(question.deletedCount === 0){
-            return res.status(404).json()
-        }else{
-            return res.status(204).json()
+        if (!deletedQuestion) {
+            return res.status(404).json({ message: 'Question not found' });
         }
+
+        return res.status(200).json({ message: 'Question deleted successfully', deletedQuestion });
     } catch (error) {
-        return res.status(500).json({"error":error})
+        return res.status(500).json({ error: error.message });
     }
-})
+});
+
 
 //creates a new subject
 router.post(`${baseRoute}/subject`, async (req, res) => {
