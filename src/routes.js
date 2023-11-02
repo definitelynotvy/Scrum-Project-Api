@@ -48,12 +48,6 @@ router.post(`${baseRoute}/questions`, async (req, res) => {
             test
         })
 
-        const { description, alternatives } = req.body;
-
-        const question = await Question.create({
-            description,
-            alternatives
-        });
 
         return res.status(201).json({ message: 'Question created successfully', question });
     } catch (error) {
