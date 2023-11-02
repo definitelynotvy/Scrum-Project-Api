@@ -37,8 +37,7 @@ router.get(`${baseRoute}/questions/:id`, async (req, res) => {
 // create one quiz question
 router.post(`${baseRoute}/questions`, async (req, res) => {
     try {
-<<<<<<< HEAD
-<<<<<<< HEAD
+
         const { description } = req.body
         const { alternatives } = req.body
         const { test } = req.body
@@ -48,19 +47,13 @@ router.post(`${baseRoute}/questions`, async (req, res) => {
             alternatives,
             test
         })
-=======
-=======
->>>>>>> f4bba3d6762a0fc1e92ff1649ed46ef679f6c96b
+
         const { description, alternatives } = req.body;
 
         const question = await Question.create({
             description,
             alternatives
         });
-<<<<<<< HEAD
->>>>>>> f4bba3d6762a0fc1e92ff1649ed46ef679f6c96b
-=======
->>>>>>> f4bba3d6762a0fc1e92ff1649ed46ef679f6c96b
 
         return res.status(201).json({ message: 'Question created successfully', question });
     } catch (error) {
