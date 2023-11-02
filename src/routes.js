@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const Question = require('./models/Question') // includes our model
 const Subject = require('./models/Subject')
+const Test = require('./models/Test')
 
 const baseRoute = '/api/v1';
 
@@ -38,10 +39,12 @@ router.post(`${baseRoute}/questions`, async (req, res) => {
     try {
         const { description } = req.body
         const { alternatives } = req.body
+        const { test } = req.body
 
         const question = await Question.create({
             description,
-            alternatives
+            alternatives,
+            test
         })
 
         return res.status(201).json(question)
@@ -133,5 +136,49 @@ router.get(`${baseRoute}/question/subject/:id`, async (req, res) => {
         return res.status(500).json({"error":error})
     }
 })
+
+// Create one test
+router.post(`${baseRoute}/tests`, async (req, res) => {
+    try {
+        const { title, description, passcode } = req.body;
+
+        // Create a new test without specifying questions
+        const test = await Test.create({
+            title,
+            description,
+            passcode
+        })
+
+        return res.status(201).json(test);
+    } catch (error) {
+        return res.status(500).json({ "error": error })
+    }
+})
+
+
+// Get a test with passcode and list of question IDs
+router.get(`${baseRoute}/tests/:passcode`, async (req, res) => {
+    try {
+        const passcode = req.params.passcode;
+
+        // Find the test by the provided passcode
+        const test = await Test.findOne({ passcode });
+
+        if (!test) {
+            return res.status(404).json({ "error": "Test not found" });
+        }
+
+        // Find all questions associated with the test
+        const questions = await Question.find({ test: test.title });
+
+        // Return the test information and list of question IDs
+        return res.status(200).json({
+            test,
+            questionIds: questions.map(question => question._id),
+        });
+    } catch (error) {
+        return res.status(500).json({ "error": error });
+    }
+});
 
 module.exports = router

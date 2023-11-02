@@ -15,11 +15,13 @@ const QuestionSchema = new mongoose.Schema({
             }
         }
     ],
-    subjects: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Subject',
-        required: false
+    test: [{
+        type: String,
+        ref: 'Test',
+        required: true
     }]
 })
+
+
 
 module.exports = mongoose.model('Question', QuestionSchema)
