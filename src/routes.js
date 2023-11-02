@@ -88,19 +88,20 @@ router.put(`${baseRoute}/questions/:id`, async (req, res) => {
 // delete one quiz question
 router.delete(`${baseRoute}/questions/:id`, async (req, res) => {
     try {
-        const _id = req.params.id;
+        const questionId = req.params.id;
 
-        const question = await Question.deleteOne({ _id });
+        const deletedQuestion = await Question.findByIdAndDelete(questionId);
 
-        if (question.deletedCount === 0) {
+        if (!deletedQuestion) {
             return res.status(404).json({ message: 'Question not found' });
-        } else {
-            return res.status(204).json({ message: 'Question deleted successfully' });
         }
+
+        return res.status(200).json({ message: 'Question deleted successfully', deletedQuestion });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
 });
+
 
 //creates a new subject
 router.post(`${baseRoute}/subject`, async (req, res) => {
